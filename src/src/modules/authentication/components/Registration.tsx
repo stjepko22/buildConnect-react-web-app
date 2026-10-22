@@ -63,7 +63,7 @@ const Registration: React.FC<RegistrationProps> = observer(({ registrationStore,
       width="100%"
     >
       <Box textAlign="center">
-        <Typography variant="h4" sx={{ fontWeight: 900, color: 'primary.main' }}>
+        <Typography variant="h4" sx={{ fontWeight: 900, color: 'primary.light' }}>
           Kreiraj svoj račun
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>

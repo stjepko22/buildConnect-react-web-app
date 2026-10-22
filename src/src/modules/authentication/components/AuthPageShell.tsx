@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, IconButton, Paper, Stack, Typography, alpha, useTheme } from '@mui/material';
+import { Box, IconButton, Paper, Stack, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import BaseContainer from '@/core/components/atoms/containers/BaseContainer';
@@ -11,7 +11,6 @@ interface AuthPageShellProps {
 }
 
 const AuthPageShell: React.FC<AuthPageShellProps> = ({ children, onBack, maxWidth = 'xs' }) => {
-  const theme = useTheme();
   const navigate = useNavigate();
 
   const handleBrandClick = () => {
@@ -50,13 +49,13 @@ const AuthPageShell: React.FC<AuthPageShellProps> = ({ children, onBack, maxWidt
               onClick={handleBrandClick}
               sx={{
                 fontWeight: 800,
-                color: 'primary.main',
+                color: 'text.primary',
                 cursor: 'pointer',
                 textAlign: 'right',
               }}
             >
               Build
-              <Box component="span" sx={{ color: 'secondary.main' }}>
+              <Box component="span" sx={{ color: 'primary.light' }}>
                 Connect
               </Box>
             </Typography>
@@ -67,7 +66,7 @@ const AuthPageShell: React.FC<AuthPageShellProps> = ({ children, onBack, maxWidt
               p: { xs: 3, sm: 4, md: '48px 56px' },
               borderRadius: 6,
               border: '1px solid',
-              borderColor: alpha(theme.palette.divider, 0.1),
+              borderColor: 'divider',
               boxShadow: 2,
               bgcolor: 'background.paper',
               width: '100%',

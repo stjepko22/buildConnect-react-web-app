@@ -178,7 +178,7 @@ const JobDetailsPage: React.FC = observer(() => {
             position: 'relative',
             overflow: 'hidden',
             background: isMobile
-              ? `linear-gradient(180deg, ${alpha(theme.palette.primary.light, 0.72)} 0%, ${theme.palette.background.default} 100%)`
+              ? `linear-gradient(180deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${theme.palette.background.default} 100%)`
               : `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.16)} 0%, ${alpha(theme.palette.background.paper, 0.98)} 32%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
             border: isMobile ? '1px solid' : 'none',
             borderColor: isMobile ? alpha(theme.palette.primary.main, 0.08) : 'transparent',
@@ -342,7 +342,7 @@ const JobDetailsPage: React.FC = observer(() => {
                 <Typography
                   sx={{
                     fontWeight: 900,
-                    color: job.budget ? 'success.dark' : 'secondary.main',
+                    color: job.budget ? 'success.light' : 'secondary.main',
                     fontSize: { xs: '1.35rem', md: '1.8rem' },
                     lineHeight: 1.05,
                     letterSpacing: '-0.03em',
@@ -441,7 +441,7 @@ const JobDetailsPage: React.FC = observer(() => {
               <Typography
                 variant="overline"
                 sx={{
-                  color: 'primary.main',
+                  color: 'primary.light',
                   fontWeight: 900,
                   letterSpacing: '0.08em',
                 }}
@@ -490,7 +490,7 @@ const JobDetailsPage: React.FC = observer(() => {
                   alignItems: 'center',
                   gap: 1.5,
                   fontWeight: 900,
-                  color: 'success.dark',
+                  color: 'success.light',
                   mb: 1,
                 }}
               >
@@ -524,7 +524,7 @@ const JobDetailsPage: React.FC = observer(() => {
                 <Typography
                   variant="overline"
                   sx={{
-                    color: 'primary.main',
+                    color: 'primary.light',
                     fontWeight: 900,
                     letterSpacing: '0.08em',
                   }}
@@ -560,7 +560,7 @@ const JobDetailsPage: React.FC = observer(() => {
                   label={bidCountLabel}
                   sx={{
                     fontWeight: 900,
-                    bgcolor: alpha(theme.palette.secondary.main, 0.96),
+                    bgcolor: 'background.paper',
                     color: 'common.white',
                     borderRadius: 999,
                     height: 30,
@@ -608,8 +608,8 @@ const JobDetailsPage: React.FC = observer(() => {
                   borderRadius: { xs: 4, md: 6 },
                   border: '1px dashed',
                   borderColor: alpha(theme.palette.primary.main, 0.2),
-                  bgcolor: alpha(theme.palette.primary.light, 0.38),
-                  backgroundImage: `linear-gradient(180deg, ${alpha(theme.palette.primary.light, 0.5)} 0%, ${alpha(theme.palette.background.paper, 0.96)} 100%)`,
+                  bgcolor: 'background.paper',
+                  backgroundImage: `linear-gradient(180deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.background.paper, 0.96)} 100%)`,
                 }}
               >
                 <Box
@@ -623,7 +623,7 @@ const JobDetailsPage: React.FC = observer(() => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     bgcolor: alpha(theme.palette.primary.main, 0.14),
-                    color: 'primary.main',
+                    color: 'primary.light',
                     boxShadow: `0 12px 24px ${alpha(theme.palette.primary.main, 0.1)}`,
                   }}
                 >
@@ -680,7 +680,7 @@ const JobDetailsPage: React.FC = observer(() => {
                           fontWeight: 900,
                           fontSize: '1.02rem',
                           flexShrink: 0,
-                          boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.7)}`,
+                          boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.08)}`,
                         }}
                       >
                         {bid.contractorName.trim().charAt(0).toUpperCase()}
@@ -696,7 +696,7 @@ const JobDetailsPage: React.FC = observer(() => {
                               color: 'secondary.main',
                               fontSize: { xs: '1rem', md: '1.1rem' },
                               lineHeight: 1.2,
-                              '&:hover': { color: 'primary.main' },
+                              '&:hover': { color: 'primary.light' },
                             }}
                               onClick={() => navigate(`/profil/${bid.contractorId}`)}
                           >
@@ -763,7 +763,7 @@ const JobDetailsPage: React.FC = observer(() => {
                           <Typography
                             sx={{
                               fontWeight: 900,
-                              color: 'success.dark',
+                              color: 'success.light',
                               fontSize: '1.3rem',
                               lineHeight: 1.05,
                               letterSpacing: '-0.03em',
@@ -821,7 +821,7 @@ const JobDetailsPage: React.FC = observer(() => {
                             alignItems: 'center',
                             justifyContent: 'center',
                             bgcolor: alpha(theme.palette.success.main, 0.14),
-                            color: 'success.dark',
+                            color: 'success.light',
                             flexShrink: 0,
                           }}
                         >
@@ -843,7 +843,7 @@ const JobDetailsPage: React.FC = observer(() => {
                           <Typography
                             sx={{
                               fontWeight: 900,
-                              color: 'success.dark',
+                              color: 'success.light',
                               fontSize: { xs: '1.12rem', md: '1.25rem' },
                               lineHeight: 1.05,
                               letterSpacing: '-0.02em',
@@ -901,10 +901,10 @@ const JobDetailsPage: React.FC = observer(() => {
               <Paper
                 sx={{
                   ...cardStyle,
-                  bgcolor: 'secondary.main',
-                  color: 'white',
-                  boxShadow: `0 20px 40px ${alpha(theme.palette.secondary.main, 0.25)}`,
-                  backgroundImage: `linear-gradient(180deg, ${alpha(theme.palette.common.white, 0.04)} 0%, ${theme.palette.secondary.main} 100%)`,
+                  bgcolor: 'background.paper',
+                  color: 'common.white',
+                  boxShadow: `0 20px 40px ${alpha(theme.palette.common.black, 0.25)}`,
+                  backgroundImage: `linear-gradient(180deg, ${alpha(theme.palette.common.white, 0.04)} 0%, ${theme.palette.background.paper} 100%)`,
                 }}
               >
                 <Chip
@@ -947,7 +947,7 @@ const JobDetailsPage: React.FC = observer(() => {
                       value={reviewStore.reviewRating}
                       onChange={(_, value) => reviewStore.setReviewRating(value)}
                       sx={{
-                        '& .MuiRating-iconFilled': { color: 'primary.main' },
+                        '& .MuiRating-iconFilled': { color: 'warning.main' },
                         '& .MuiRating-iconEmpty': { color: alpha(theme.palette.common.white, 0.2) },
                       }}
                     />
@@ -960,7 +960,7 @@ const JobDetailsPage: React.FC = observer(() => {
                     value={reviewStore.reviewComment}
                     onChange={(event) => reviewStore.setReviewComment(event.target.value)}
                     required
-                    sx={{ mb: 3, '& .MuiOutlinedInput-root': { bgcolor: 'white' } }}
+                    sx={{ mb: 3, '& .MuiOutlinedInput-root': { bgcolor: 'background.paper' } }}
                   />
                   {reviewStore.reviewError && (
                     <Alert severity="error" sx={{ mb: 3, borderRadius: 3 }}>

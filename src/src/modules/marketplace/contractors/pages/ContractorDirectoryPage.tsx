@@ -90,7 +90,7 @@ const ContractorDirectoryPage: React.FC = observer(() => {
     <Box
       sx={{
         pb: { xs: 2, md: 5 },
-        background: `linear-gradient(180deg, ${alpha(theme.palette.primary.light, 0.4)} 0%, ${theme.palette.background.default} 22%, ${theme.palette.background.default} 100%)`,
+        background: `linear-gradient(180deg, ${alpha(theme.palette.primary.main, 0.12)} 0%, ${theme.palette.background.default} 22%, ${theme.palette.background.default} 100%)`,
       }}
     >
       <BaseContainer maxWidth={false} disableGutters animate={false}>

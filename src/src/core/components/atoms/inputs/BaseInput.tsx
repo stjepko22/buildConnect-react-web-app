@@ -10,7 +10,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
       backgroundColor: theme.palette.background.paper,
     },
     '& .MuiOutlinedInput-notchedOutline': {
-      borderColor: alpha(theme.palette.divider, 0.2),
+      borderColor: theme.palette.divider,
       transition: theme.transitions.create(['border-color']),
     },
     '&:hover .MuiOutlinedInput-notchedOutline': {
@@ -33,7 +33,7 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     fontSize: '0.9rem',
     color: theme.palette.text.secondary,
     '&.Mui-focused': {
-      color: theme.palette.primary.main,
+      color: theme.palette.primary.light,
     },
     '&.Mui-error': {
       color: theme.palette.error.main,

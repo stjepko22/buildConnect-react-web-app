@@ -100,13 +100,13 @@ const JobCard: React.FC<JobCardProps> = observer(({ job }) => {
                   fontWeight: 800,
                   borderRadius: 999,
                   bgcolor: alpha(theme.palette.primary.main, 0.12),
-                  backgroundImage: `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.96)} 0%, ${alpha(theme.palette.primary.light, 0.68)} 52%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`,
-                  color: 'primary.main',
+                  backgroundImage: `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.96)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 52%, ${alpha(theme.palette.primary.main, 0.04)} 100%)`,
+                  color: 'primary.light',
                   fontSize: '0.7rem',
                   height: { xs: 30, md: 34 },
                   border: '1px solid',
                   borderColor: alpha(theme.palette.primary.main, 0.16),
-                  boxShadow: `0 10px 22px ${alpha(theme.palette.primary.main, 0.08)}, inset 0 1px 0 ${alpha(theme.palette.common.white, 0.78)}`,
+                  boxShadow: `0 10px 22px ${alpha(theme.palette.primary.main, 0.08)}, inset 0 1px 0 ${alpha(theme.palette.common.white, 0.08)}`,
                   '& .MuiChip-label': {
                     px: { xs: 1.1, md: 1.35 },
                     letterSpacing: '0.012em',
@@ -238,7 +238,7 @@ const JobCard: React.FC<JobCardProps> = observer(({ job }) => {
                       bgcolor: job.budget
                         ? alpha(theme.palette.success.main, 0.14)
                         : alpha(theme.palette.primary.main, 0.1),
-                      color: job.budget ? 'success.dark' : 'primary.main',
+                      color: job.budget ? 'success.light' : 'primary.light',
                       flexShrink: 0,
                     }}
                   >
@@ -247,7 +247,7 @@ const JobCard: React.FC<JobCardProps> = observer(({ job }) => {
                     <Typography
                       sx={{
                         fontWeight: 900,
-                        color: job.budget ? 'success.dark' : 'secondary.main',
+                        color: job.budget ? 'success.light' : 'secondary.main',
                         lineHeight: 1.05,
                         fontSize: { xs: '0.94rem', md: '1.12rem' },
                         letterSpacing: '-0.02em',

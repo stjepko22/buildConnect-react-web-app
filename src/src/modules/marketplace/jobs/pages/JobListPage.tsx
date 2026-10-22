@@ -239,7 +239,7 @@ const JobListPage: React.FC = observer(() => {
             pt: 0.25,
             pb: 0.8,
             mb: 0.55,
-            background: `linear-gradient(180deg, ${alpha(theme.palette.primary.light, 0.62)} 0%, ${theme.palette.background.default} 100%)`,
+            background: `linear-gradient(180deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${theme.palette.background.default} 100%)`,
           }}
         >
           <BaseContainer maxWidth={false} disableGutters withPadding={false} animate={false}>

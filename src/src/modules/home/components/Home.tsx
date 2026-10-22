@@ -298,8 +298,8 @@ const Home: React.FC = observer(() => {
         pb: { xs: 2.5, md: 8 },
         background: `
           radial-gradient(circle at top right, ${alpha(theme.palette.primary.main, 0.08)} 0%, transparent 22%),
-          radial-gradient(circle at top left, ${alpha(theme.palette.primary.light, 0.85)} 0%, transparent 26%),
-          linear-gradient(180deg, ${alpha(theme.palette.primary.light, 0.62)} 0%, ${theme.palette.background.default} 24%, ${theme.palette.background.default} 100%)
+          radial-gradient(circle at top left, ${alpha(theme.palette.primary.main, 0.1)} 0%, transparent 26%),
+          linear-gradient(180deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${theme.palette.background.default} 24%, ${theme.palette.background.default} 100%)
         `,
       }}
     >
@@ -324,8 +324,8 @@ const Home: React.FC = observer(() => {
                 mx: { md: -2.25, lg: -2.75 },
                 px: { md: 2.25, lg: 2.75 },
                 py: { md: 0.9, lg: 1.05 },
-                bgcolor: alpha(theme.palette.primary.light, 0.76),
-                backgroundImage: `linear-gradient(90deg, ${alpha(theme.palette.primary.light, 0.92)} 0%, ${alpha(theme.palette.background.paper, 0.8)} 68%, ${alpha(theme.palette.background.paper, 0.72)} 100%)`,
+                bgcolor: 'background.paper',
+                backgroundImage: `linear-gradient(90deg, ${alpha(theme.palette.primary.main, 0.1)} 0%, ${alpha(theme.palette.background.paper, 0.8)} 68%, ${alpha(theme.palette.background.paper, 0.72)} 100%)`,
                 borderBottom: '1px solid',
                 borderColor: alpha(theme.palette.primary.main, 0.12),
               }}
@@ -418,7 +418,7 @@ const Home: React.FC = observer(() => {
                       color: 'secondary.main',
                     }}
                   >
-                    <VerifiedUserRoundedIcon sx={{ fontSize: 17, color: 'primary.main' }} />
+                    <VerifiedUserRoundedIcon sx={{ fontSize: 17, color: 'primary.light' }} />
                     <Typography sx={{ fontSize: '0.74rem', fontWeight: 800, lineHeight: 1.2 }}>
                       {desktopRoleLabel}
                     </Typography>
@@ -457,7 +457,7 @@ const Home: React.FC = observer(() => {
                         py: 0.42,
                         borderRadius: 999,
                         bgcolor: alpha(theme.palette.primary.main, 0.12),
-                        color: 'primary.main',
+                        color: 'primary.light',
                         fontWeight: 900,
                         fontSize: '0.72rem',
                         letterSpacing: '0.04em',
@@ -503,7 +503,7 @@ const Home: React.FC = observer(() => {
                             py: 0.48,
                             borderRadius: 999,
                             bgcolor: alpha(theme.palette.background.paper, 0.8),
-                            boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.78)}`,
+                            boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.08)}`,
                             color: 'secondary.main',
                             fontSize: '0.76rem',
                             fontWeight: 800,
@@ -651,9 +651,9 @@ const Home: React.FC = observer(() => {
                             borderRadius: { xs: 1.2, md: '50%' },
                             bgcolor: { xs: alpha(theme.palette.primary.main, 0.1), md: alpha(theme.palette.primary.main, 0.1) },
                             boxShadow: {
-                              md: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.75)}, 0 10px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
+                              md: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.08)}, 0 10px 20px ${alpha(theme.palette.primary.main, 0.08)}`,
                             },
-                            color: 'primary.main',
+                            color: 'primary.light',
                             '& .MuiSvgIcon-root': {
                               fontSize: { xs: 18, md: 36, lg: 40 },
                             },
@@ -689,7 +689,7 @@ const Home: React.FC = observer(() => {
                   p: { md: 2.15, lg: 2.55 },
                   borderRadius: 3.4,
                   bgcolor: alpha(theme.palette.background.paper, 0.98),
-                  backgroundImage: `linear-gradient(165deg, ${alpha(theme.palette.primary.light, 0.34)} 0%, ${alpha(theme.palette.background.paper, 0.98)} 46%, ${theme.palette.background.paper} 100%)`,
+                  backgroundImage: `linear-gradient(165deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.background.paper, 0.98)} 46%, ${theme.palette.background.paper} 100%)`,
                   boxShadow: `0 26px 54px ${alpha(theme.palette.common.black, 0.07)}`,
                   '&::before': {
                     content: '""',
@@ -724,7 +724,7 @@ const Home: React.FC = observer(() => {
                         py: 0.42,
                         borderRadius: 999,
                         bgcolor: alpha(theme.palette.primary.main, 0.12),
-                        color: 'primary.main',
+                        color: 'primary.light',
                         fontWeight: 900,
                         fontSize: '0.72rem',
                         letterSpacing: '0.04em',
@@ -750,7 +750,7 @@ const Home: React.FC = observer(() => {
                             color: 'text.secondary',
                             '& .MuiSvgIcon-root': {
                               fontSize: 14,
-                              color: 'primary.main',
+                              color: 'primary.light',
                             },
                           }}
                         >
@@ -807,7 +807,7 @@ const Home: React.FC = observer(() => {
                           borderRadius: 2.25,
                           bgcolor: alpha(theme.palette.background.paper, 0.78),
                           backdropFilter: 'blur(8px)',
-                          boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.78)}`,
+                          boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.08)}`,
                         }}
                       >
                         <Stack direction="row" spacing={1.05} alignItems="flex-start">
@@ -821,7 +821,7 @@ const Home: React.FC = observer(() => {
                               justifyContent: 'center',
                               borderRadius: 1.2,
                               bgcolor: alpha(theme.palette.primary.main, 0.1),
-                              color: 'primary.main',
+                              color: 'primary.light',
                               '& .MuiSvgIcon-root': {
                                 fontSize: 18,
                               },
@@ -920,7 +920,7 @@ const Home: React.FC = observer(() => {
                       py: 0.38,
                       borderRadius: 999,
                       bgcolor: alpha(theme.palette.primary.main, 0.12),
-                      color: 'primary.main',
+                      color: 'primary.light',
                       fontSize: '0.68rem',
                       fontWeight: 800,
                       letterSpacing: '0.03em',
@@ -936,7 +936,7 @@ const Home: React.FC = observer(() => {
                       width: 28,
                       height: 28,
                       bgcolor: alpha(theme.palette.primary.main, 0.12),
-                      color: 'primary.main',
+                      color: 'primary.light',
                       '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.18) },
                     }}
                   >
@@ -1013,7 +1013,7 @@ const Home: React.FC = observer(() => {
                             justifyContent: 'center',
                             borderRadius: 1.15,
                             bgcolor: alpha(theme.palette.primary.main, 0.1),
-                            color: 'primary.main',
+                            color: 'primary.light',
                             '& .MuiSvgIcon-root': {
                               fontSize: { xs: 16, sm: 18, md: 20, lg: 22 },
                             },
@@ -1049,7 +1049,7 @@ const Home: React.FC = observer(() => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     bgcolor: alpha(theme.palette.primary.main, 0.14),
-                    color: 'primary.main',
+                    color: 'primary.light',
                     pointerEvents: 'none',
                     zIndex: 1,
                   }}
@@ -1070,7 +1070,7 @@ const Home: React.FC = observer(() => {
                   p: { xs: 1.35, sm: 1.55 },
                   borderRadius: 2.6,
                   bgcolor: alpha(theme.palette.background.paper, 0.98),
-                  backgroundImage: `linear-gradient(165deg, ${alpha(theme.palette.primary.light, 0.42)} 0%, ${alpha(theme.palette.background.paper, 0.98)} 50%, ${theme.palette.background.paper} 100%)`,
+                  backgroundImage: `linear-gradient(165deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.background.paper, 0.98)} 50%, ${theme.palette.background.paper} 100%)`,
                   boxShadow: `0 16px 34px ${alpha(theme.palette.common.black, 0.06)}`,
                   '&::before': {
                     content: '""',
@@ -1104,7 +1104,7 @@ const Home: React.FC = observer(() => {
                         py: 0.35,
                         borderRadius: 999,
                         bgcolor: alpha(theme.palette.primary.main, 0.14),
-                        color: 'primary.main',
+                        color: 'primary.light',
                         fontWeight: 800,
                         fontSize: '0.66rem',
                         letterSpacing: '0.02em',

@@ -134,7 +134,7 @@ const MyJobsPage: React.FC = observer(() => {
         <Typography
           variant="overline"
           sx={{
-            color: 'primary.main',
+            color: 'primary.light',
             fontWeight: 900,
             letterSpacing: '0.08em',
           }}
@@ -313,7 +313,7 @@ const MyJobsPage: React.FC = observer(() => {
                               top: 10,
                               left: 10,
                               zIndex: 2,
-                              bgcolor: alpha(theme.palette.secondary.main, 0.96),
+                              bgcolor: 'background.paper',
                               color: 'common.white',
                               px: 1.35,
                               py: 0.45,

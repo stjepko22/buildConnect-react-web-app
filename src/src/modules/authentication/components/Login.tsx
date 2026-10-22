@@ -45,7 +45,7 @@ const Login: React.FC<LoginProps> = observer(({ authenticationStore, onSuccess }
         alignItems="center"
         sx={{ width: '100%' }}
       >
-        <Typography variant="h4" sx={{ fontWeight: 900, mb: 1, color: 'primary.main', letterSpacing: '-1px' }}>
+        <Typography variant="h4" sx={{ fontWeight: 900, mb: 1, color: 'primary.light', letterSpacing: '-1px' }}>
           Prijavite se
         </Typography>
         <Typography variant="body1" color="text.secondary" sx={{ mb: 4, textAlign: 'center' }}>

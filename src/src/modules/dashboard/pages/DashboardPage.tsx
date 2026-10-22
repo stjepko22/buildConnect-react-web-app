@@ -151,7 +151,7 @@ const DashboardPage: React.FC = observer(() => {
             {dashboardSubtitle}
           </Typography>
           <Typography variant="body2" sx={{ mt: 0.7, color: 'text.secondary', fontWeight: 600 }}>
-            Dobrodosao natrag, <Box component="span" sx={{ color: 'primary.main', fontWeight: 900 }}>{user?.displayName}</Box>
+            Dobrodosao natrag, <Box component="span" sx={{ color: 'primary.light', fontWeight: 900 }}>{user?.displayName}</Box>
           </Typography>
         </Box>
 
@@ -241,7 +241,7 @@ const DashboardPage: React.FC = observer(() => {
                 <Typography
                   variant="overline"
                   sx={{
-                    color: 'primary.main',
+                    color: 'primary.light',
                     fontWeight: 900,
                     letterSpacing: '0.08em',
                   }}
@@ -362,10 +362,10 @@ const DashboardPage: React.FC = observer(() => {
             <Paper
               sx={{
                 ...cardStyle,
-                bgcolor: 'secondary.main',
+                bgcolor: 'background.paper',
                 color: 'common.white',
-                backgroundImage: `linear-gradient(180deg, ${alpha(theme.palette.common.white, 0.04)} 0%, ${theme.palette.secondary.main} 100%)`,
-                boxShadow: `0 18px 36px ${alpha(theme.palette.secondary.main, 0.2)}`,
+                backgroundImage: `linear-gradient(180deg, ${alpha(theme.palette.common.white, 0.04)} 0%, ${theme.palette.background.paper} 100%)`,
+                boxShadow: `0 18px 36px ${alpha(theme.palette.common.black, 0.2)}`,
               }}
             >
               <Typography variant="overline" sx={{ fontWeight: 900, letterSpacing: '0.08em', opacity: 0.82 }}>
@@ -382,7 +382,7 @@ const DashboardPage: React.FC = observer(() => {
               <Paper sx={cardStyle}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2.2 }}>
                   <Box>
-                    <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 900, letterSpacing: '0.08em' }}>
+                    <Typography variant="overline" sx={{ color: 'primary.light', fontWeight: 900, letterSpacing: '0.08em' }}>
                       Preporuke
                     </Typography>
                     <Typography variant="h6" sx={{ fontWeight: 900, display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -443,7 +443,7 @@ const DashboardPage: React.FC = observer(() => {
             )}
 
             <Paper sx={cardStyle}>
-              <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 900, letterSpacing: '0.08em' }}>
+              <Typography variant="overline" sx={{ color: 'primary.light', fontWeight: 900, letterSpacing: '0.08em' }}>
                 Moj profil
               </Typography>
               <Typography variant="h6" sx={{ fontWeight: 900, mb: 1.4 }}>Uredite javni profil</Typography>

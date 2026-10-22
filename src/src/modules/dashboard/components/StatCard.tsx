@@ -10,7 +10,7 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ label, value, icon, color }) => {
   const theme = useTheme();
-  const mainColor = color || theme.palette.primary.main;
+  const mainColor = color || theme.palette.primary.light;
 
   return (
     <Box
@@ -39,7 +39,7 @@ const StatCard: React.FC<StatCardProps> = ({ label, value, icon, color }) => {
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: { xs: 24, md: 28 },
-          boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.74)}`,
+          boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.08)}`,
           flexShrink: 0,
         }}
       >

@@ -110,9 +110,9 @@ const Sidebar: React.FC<SidebarProps> = observer(({ onClose }) => {
           <Typography
             variant="h5"
             onClick={handleLogoClick}
-            sx={{ fontWeight: 900, color: 'primary.main', mb: 0.55, cursor: 'pointer', letterSpacing: '-0.03em' }}
+            sx={{ fontWeight: 900, color: 'text.primary', mb: 0.55, cursor: 'pointer', letterSpacing: '-0.03em' }}
           >
-            Build<Box component="span" sx={{ color: 'common.white' }}>Connect</Box>
+            Build<Box component="span" sx={{ color: 'primary.light' }}>Connect</Box>
           </Typography>
           <Typography
             sx={{
@@ -159,7 +159,7 @@ const Sidebar: React.FC<SidebarProps> = observer(({ onClose }) => {
                 <ListItemIcon
                   sx={{
                     minWidth: 42,
-                    color: active ? 'primary.main' : alpha(theme.palette.common.white, 0.82),
+                    color: active ? 'primary.light' : alpha(theme.palette.common.white, 0.82),
                   }}
                 >
                   {item.icon}
@@ -186,7 +186,7 @@ const Sidebar: React.FC<SidebarProps> = observer(({ onClose }) => {
           sx={{
             borderRadius: 2,
             py: 1.15,
-            color: user ? 'error.light' : 'primary.main',
+            color: user ? 'error.light' : 'primary.light',
             border: '1px solid',
             borderColor: user ? alpha(theme.palette.error.main, 0.25) : alpha(theme.palette.primary.main, 0.28),
             bgcolor: user ? alpha(theme.palette.error.main, 0.04) : alpha(theme.palette.primary.main, 0.08),
@@ -195,7 +195,7 @@ const Sidebar: React.FC<SidebarProps> = observer(({ onClose }) => {
             },
           }}
         >
-          <ListItemIcon sx={{ color: user ? 'error.light' : 'primary.main', minWidth: 40 }}>
+          <ListItemIcon sx={{ color: user ? 'error.light' : 'primary.light', minWidth: 40 }}>
             {user ? <LogoutIcon /> : <LoginIcon />}
           </ListItemIcon>
           <ListItemText primary={user ? 'Odjava' : 'Prijava'} primaryTypographyProps={{ fontWeight: 800 }} />

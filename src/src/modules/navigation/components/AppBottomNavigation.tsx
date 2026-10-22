@@ -81,9 +81,9 @@ const AppBottomNavigation: React.FC = observer(() => {
         zIndex: 1000,
         borderRadius: 0,
         borderTop: '1px solid',
-        borderColor: alpha(theme.palette.common.white, 0.1),
+        borderColor: 'divider',
         backdropFilter: 'blur(12px)',
-        background: alpha(theme.palette.common.black, 0.78),
+        background: alpha(BRAND_COLORS.darkBase, 0.96),
       }}
       elevation={0}
     >
@@ -94,7 +94,7 @@ const AppBottomNavigation: React.FC = observer(() => {
           height: 70,
           bgcolor: 'transparent',
           '& .MuiBottomNavigationAction-root': {
-            color: alpha(theme.palette.common.white, 0.62),
+            color: 'text.secondary',
             minWidth: 0,
             maxWidth: 'none',
             flex: 1,
@@ -107,7 +107,7 @@ const AppBottomNavigation: React.FC = observer(() => {
             },
           },
           '& .Mui-selected': {
-            color: 'primary.main',
+            color: 'primary.light',
             '& .MuiSvgIcon-root': {
               transform: 'scale(1.15)',
               transition: 'transform 0.2s ease-in-out',
@@ -127,7 +127,7 @@ const AppBottomNavigation: React.FC = observer(() => {
           <BottomNavigationAction
             label="Objavi"
             value="/objavi-posao"
-            icon={<AddCircleIcon sx={{ fontSize: '2rem', color: 'primary.main' }} />}
+            icon={<AddCircleIcon sx={{ fontSize: '2rem', color: 'primary.light' }} />}
             onClick={() => handleNavigate('/objavi-posao')}
           />
         )}

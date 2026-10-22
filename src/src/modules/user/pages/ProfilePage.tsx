@@ -203,11 +203,11 @@ const ProfilePage: React.FC = observer(() => {
                     width: { xs: 98, md: 118 },
                     height: { xs: 98, md: 118 },
                     bgcolor: alpha(theme.palette.primary.main, 0.14),
-                    color: 'primary.main',
+                    color: 'primary.light',
                     fontSize: { xs: 34, md: 40 },
                     fontWeight: 900,
                     mb: 2.4,
-                    boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.72)}`,
+                    boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.08)}`,
                   }}
                 >
                   {user.displayName.charAt(0)}
@@ -264,7 +264,7 @@ const ProfilePage: React.FC = observer(() => {
 
               <Divider sx={{ my: 3 }} />
 
-              <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 900, letterSpacing: '0.08em' }}>
+              <Typography variant="overline" sx={{ color: 'primary.light', fontWeight: 900, letterSpacing: '0.08em' }}>
                 Biografija
               </Typography>
               <Typography variant="body2" sx={{ mt: 0.7, lineHeight: 1.7, color: 'text.secondary' }}>
@@ -273,7 +273,7 @@ const ProfilePage: React.FC = observer(() => {
 
               {user.serviceCategories && user.serviceCategories.length > 0 && (
                 <Box sx={{ mt: 3.2 }}>
-                  <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 900, letterSpacing: '0.08em' }}>
+                  <Typography variant="overline" sx={{ color: 'primary.light', fontWeight: 900, letterSpacing: '0.08em' }}>
                     Usluge i vjestine
                   </Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
@@ -324,7 +324,7 @@ const ProfilePage: React.FC = observer(() => {
                     borderColor: alpha(theme.palette.primary.main, 0.08),
                   }}
                 >
-                  <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 900, letterSpacing: '0.08em' }}>
+                  <Typography variant="overline" sx={{ color: 'primary.light', fontWeight: 900, letterSpacing: '0.08em' }}>
                     Moj profil
                   </Typography>
                   <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.1} sx={{ mt: 1.15 }}>
@@ -364,7 +364,7 @@ const ProfilePage: React.FC = observer(() => {
                     alignItems={{ xs: 'flex-start', md: 'center' }}
                   >
                     <Box>
-                      <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 900, letterSpacing: '0.08em' }}>
+                      <Typography variant="overline" sx={{ color: 'primary.light', fontWeight: 900, letterSpacing: '0.08em' }}>
                         Reputacija
                       </Typography>
                       <Typography variant="h4" sx={{ mt: 0.2, fontWeight: 900, color: 'secondary.main' }}>
@@ -401,7 +401,7 @@ const ProfilePage: React.FC = observer(() => {
                     }}
                   >
                     <Box>
-                      <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 900, letterSpacing: '0.08em' }}>
+                      <Typography variant="overline" sx={{ color: 'primary.light', fontWeight: 900, letterSpacing: '0.08em' }}>
                         Iskustva klijenata
                       </Typography>
                       <Typography variant="h5" sx={{ mt: 0.2, fontWeight: 900, color: 'secondary.main' }}>
@@ -459,7 +459,7 @@ const ProfilePage: React.FC = observer(() => {
                           <Typography variant="body1" sx={{ fontWeight: 500, mb: 1.2, lineHeight: 1.65, color: 'secondary.main' }}>
                             "{review.comment}"
                           </Typography>
-                          <Typography variant="caption" sx={{ fontWeight: 800, color: 'primary.main' }}>
+                          <Typography variant="caption" sx={{ fontWeight: 800, color: 'primary.light' }}>
                             PROJEKT: {jobStore.jobs.find((job) => job.id === review.jobId)?.title || 'Nepoznat posao'}
                           </Typography>
                         </Paper>
@@ -483,7 +483,7 @@ const ProfilePage: React.FC = observer(() => {
                     }}
                   >
                     <Box>
-                      <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 900, letterSpacing: '0.08em' }}>
+                      <Typography variant="overline" sx={{ color: 'primary.light', fontWeight: 900, letterSpacing: '0.08em' }}>
                         Aktivnost investitora
                       </Typography>
                       <Typography variant="h5" sx={{ mt: 0.2, fontWeight: 900, color: 'secondary.main' }}>

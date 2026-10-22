@@ -75,14 +75,14 @@ const MainLayout: React.FC = observer(() => {
                 left: '50%',
                 transform: 'translateX(-50%)',
                 fontWeight: 800,
-                color: 'primary.main',
+                color: 'text.primary',
                 cursor: 'pointer',
                 textAlign: 'center',
                 maxWidth: 'calc(100% - 96px)',
               }}
             >
               Build
-              <Box component="span" sx={{ color: 'secondary.main' }}>
+              <Box component="span" sx={{ color: 'primary.light' }}>
                 Connect
               </Box>
             </Typography>
@@ -102,13 +102,13 @@ const MainLayout: React.FC = observer(() => {
               onClick={handleLogoClick}
               sx={{
                 fontWeight: 800,
-                color: 'primary.main',
+                color: 'text.primary',
                 cursor: 'pointer',
                 flexShrink: 0,
               }}
             >
               Build
-              <Box component="span" sx={{ color: 'secondary.main' }}>
+              <Box component="span" sx={{ color: 'primary.light' }}>
                 Connect
               </Box>
             </Typography>
