@@ -1,417 +1,270 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react-lite';
+import { useSearchParams } from 'react-router-dom';
 import {
-  Alert,
-  Box,
-  Chip,
-  CircularProgress,
-  Grid,
-  MenuItem,
-  Paper,
-  Rating,
-  Stack,
-  Typography,
-  alpha,
-  useMediaQuery,
-  useTheme,
+  Alert, Autocomplete, Box, Button, Checkbox, Chip, Grid, IconButton, InputAdornment,
+  MenuItem, Paper, Skeleton, Stack, ToggleButton, ToggleButtonGroup, Typography, alpha,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import BusinessIcon from '@mui/icons-material/Business';
-import PersonIcon from '@mui/icons-material/Person';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import BaseButton from '@/core/components/atoms/buttons/BaseButton';
+import BookmarkBorderRoundedIcon from '@mui/icons-material/BookmarkBorderRounded';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import EngineeringRoundedIcon from '@mui/icons-material/EngineeringRounded';
+import RefreshRoundedIcon from '@mui/icons-material/RefreshRounded';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import SearchOffRoundedIcon from '@mui/icons-material/SearchOffRounded';
+import debounce from 'lodash/debounce';
 import BaseContainer from '@/core/components/atoms/containers/BaseContainer';
 import BaseInput from '@/core/components/atoms/inputs/BaseInput';
 import { useRootStore } from '@/core/hooks/useRootStore';
+import ContractorCard from '@/modules/marketplace/contractors/components/ContractorCard';
 import { JOB_CATEGORIES, JobCategory } from '@/modules/marketplace/jobs/constants/jobCategories';
-import debounce from 'lodash/debounce';
-import ProfileAvatar from '@/modules/user/components/ProfileAvatar';
+import { LegalType } from '@/modules/user/models/LegalType';
+import { ContractorSort } from '@/modules/user/stores/UserStore';
+
+const loadingCards = [0, 1, 2, 3];
+const contractorPluralRules = new Intl.PluralRules('hr');
 
 const ContractorDirectoryPage: React.FC = observer(() => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { userStore, reviewStore, authenticationStore } = useRootStore();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const isAuthenticated = !!authenticationStore.user;
+  const [locationInput, setLocationInput] = useState('');
+  const [hasSavedCategories, setHasSavedCategories] = useState(false);
   const debouncedSearch = useMemo(
-    () => debounce((value: string) => userStore.setContractorSearchQuery(value), 300),
-    [userStore]
+    () => debounce(userStore.setContractorSearchQuery, 300), [userStore]
+  );
+  const debouncedLocation = useMemo(
+    () => debounce((value: string) => userStore.setSelectedContractorLocation(value.trim()), 300), [userStore]
   );
 
   useEffect(() => {
-    const categoryFilters = Array.from(
-      new Set(
-        searchParams
-          .getAll('category')
-          .filter((value): value is JobCategory => JOB_CATEGORIES.includes(value as JobCategory))
-      )
-    );
-    const queryFilter = searchParams.get('q')?.trim() ?? '';
-    const legalTypeFilter = searchParams.get('legalType');
-    const hasRouteFilters = searchParams.has('q') || searchParams.has('category') || searchParams.has('legalType') || searchParams.has('location');
-
+    debouncedSearch.cancel();
+    debouncedLocation.cancel();
     userStore.resetContractorFilters();
     userStore.initializeContractorFiltersForCurrentUser();
-
+    const hasRouteFilters = ['q', 'category', 'legalType', 'location'].some((key) => searchParams.has(key));
     if (hasRouteFilters) {
-      userStore.setContractorSearchInputValue(queryFilter);
-      userStore.setContractorSearchQuery(queryFilter);
-      userStore.setSelectedContractorCategories(categoryFilters);
-      userStore.setSelectedContractorLegalType(
-        legalTypeFilter === 'FIRMA' || legalTypeFilter === 'FIZICKA_OSOBA' ? legalTypeFilter : 'ALL'
-      );
-      userStore.setSelectedContractorLocation(searchParams.get('location')?.trim() ?? '');
+      const query = searchParams.get('q')?.trim() || '';
+      const legalType = searchParams.get('legalType');
+      const categories = Array.from(new Set(searchParams.getAll('category')
+        .filter((value): value is JobCategory => JOB_CATEGORIES.includes(value as JobCategory))));
+      userStore.setContractorSearchInputValue(query);
+      userStore.setContractorSearchQuery(query);
+      userStore.setSelectedContractorCategories(categories);
+      userStore.setSelectedContractorLegalType(legalType === 'FIRMA' || legalType === 'FIZICKA_OSOBA' ? legalType : 'ALL');
+      userStore.setSelectedContractorLocation(searchParams.get('location')?.trim() || '');
     }
+    setLocationInput(userStore.selectedContractorLocation);
+    setHasSavedCategories(false);
+    return () => { debouncedSearch.cancel(); debouncedLocation.cancel(); };
+  }, [debouncedLocation, debouncedSearch, searchParams, userStore]);
 
-    void reviewStore.loadReviews();
+  useEffect(() => { void reviewStore.loadReviews(); }, [reviewStore]);
 
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, [debouncedSearch, reviewStore, searchParams, userStore]);
+  const loadContractors = () => userStore.loadContractors({
+    q: userStore.contractorSearchQuery.trim() || undefined,
+    category: userStore.selectedContractorCategories.length ? userStore.selectedContractorCategories : undefined,
+    location: userStore.selectedContractorLocation || undefined,
+    legalType: userStore.selectedContractorLegalType === 'ALL' ? undefined : userStore.selectedContractorLegalType,
+  });
 
   useEffect(() => {
     void userStore.loadContractors({
       q: userStore.contractorSearchQuery.trim() || undefined,
-      category: userStore.selectedContractorCategories.length > 0 ? userStore.selectedContractorCategories : undefined,
-      location: userStore.selectedContractorLocation.trim() || undefined,
+      category: userStore.selectedContractorCategories.length ? userStore.selectedContractorCategories : undefined,
+      location: userStore.selectedContractorLocation || undefined,
       legalType: userStore.selectedContractorLegalType === 'ALL' ? undefined : userStore.selectedContractorLegalType,
     });
-  }, [
-    userStore,
-    userStore.contractorSearchQuery,
-    userStore.selectedContractorCategories,
-    userStore.selectedContractorLocation,
-    userStore.selectedContractorLegalType,
-  ]);
+  }, [userStore, userStore.contractorSearchQuery, userStore.selectedContractorCategories,
+    userStore.selectedContractorLocation, userStore.selectedContractorLegalType]);
+
+  const clearSearch = () => {
+    debouncedSearch.cancel();
+    userStore.setContractorSearchInputValue('');
+    userStore.setContractorSearchQuery('');
+  };
+  const clearLocation = () => {
+    debouncedLocation.cancel();
+    setLocationInput('');
+    userStore.setSelectedContractorLocation('');
+  };
+  const resetFilters = () => {
+    debouncedSearch.cancel();
+    debouncedLocation.cancel();
+    userStore.resetContractorFilters();
+    setLocationInput('');
+    setHasSavedCategories(false);
+  };
+  const isLoading = userStore.isLoadingContractors || reviewStore.isLoadingReviews;
+  const hasRatings = !reviewStore.isLoadingReviews && !reviewStore.reviewListError;
+  const contractors = userStore.filteredContractors;
+  const contractorLabel = contractorPluralRules.select(contractors.length) === 'one' ? 'izvođač' : 'izvođača';
+  const hasActiveFilters = Boolean(userStore.contractorSearchInputValue.trim() || locationInput.trim()
+    || userStore.selectedContractorCategories.length || userStore.selectedContractorLegalType !== 'ALL'
+    || userStore.minContractorRating);
 
   return (
-    <Box
-      sx={{
-        pb: { xs: 2, md: 5 },
-        background: `linear-gradient(180deg, ${alpha(theme.palette.primary.main, 0.12)} 0%, ${theme.palette.background.default} 22%, ${theme.palette.background.default} 100%)`,
-      }}
-    >
-      <BaseContainer maxWidth={false} disableGutters animate={false}>
-        <Stack spacing={{ xs: 2, md: 3 }} sx={{ pt: { xs: 0.25, md: 0.35 } }}>
-          <Box
-            sx={{
-              width: '100%',
-              px: { md: 0.1, lg: 0.2 },
-              py: { md: 0.72, lg: 0.9 },
-              background: isMobile
-                ? 'transparent'
-                : `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.14)} 0%, ${alpha(theme.palette.background.paper, 0.98)} 34%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
-              borderBottom: isMobile ? 'none' : '1px solid',
-              borderColor: alpha(theme.palette.primary.main, 0.07),
-            }}
-          >
-            <Stack
-              direction={{ xs: 'column', sm: 'row' }}
-              justifyContent="space-between"
-              alignItems={{ xs: 'flex-start', sm: 'flex-end' }}
-              spacing={1.2}
-              sx={{ gap: 1.2 }}
-            >
-              <Stack spacing={0.65} sx={{ maxWidth: 820 }}>
-                <Chip
-                  label={isAuthenticated ? 'Direktorij izvođača' : 'Javni direktorij'}
-                  color="primary"
-                  sx={{
-                    alignSelf: 'flex-start',
-                    height: 28,
-                    fontWeight: 900,
-                    borderRadius: 999,
-                    boxShadow: `0 10px 22px ${alpha(theme.palette.primary.main, 0.11)}`,
-                    '& .MuiChip-label': {
-                      px: 1.1,
-                      letterSpacing: '0.03em',
-                      textTransform: 'uppercase',
-                      fontSize: '0.7rem',
-                    },
-                  }}
-                />
-                <Typography
-                  variant="h3"
-                  sx={{
-                    fontWeight: 900,
-                    color: 'secondary.main',
-                    letterSpacing: '-0.04em',
-                    fontSize: { xs: '1.6rem', md: '2.45rem', lg: '2.72rem' },
-                    lineHeight: 1.03,
-                    maxWidth: 900,
-                  }}
-                >
-                  {isAuthenticated
-                    ? 'Pronađite izvođače, firme i specijalizirane timove za svaki projekt'
-                    : 'Pregledaj provjerene izvođače i upoznaj javni BuildConnect direktorij'}
-                </Typography>
-                <Typography sx={{ color: 'text.secondary', maxWidth: 740, fontSize: { xs: '0.9rem', md: '1rem' }, lineHeight: 1.55 }}>
-                  {isAuthenticated
-                    ? 'Pronađite majstore i firme po usluzi, lokaciji, tipu i ocjeni bez gubljenja vremena na nepregledne popise.'
-                    : 'Gosti mogu slobodno pregledavati profile, usluge i ocjene, a registrirani korisnici nastavljaju prema suradnjama, ponudama i punom radnom toku.'}
-                </Typography>
-              </Stack>
-              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap alignItems="center">
-                <Chip
-                  label={`${userStore.filteredContractors.length} izvođača`}
-                  variant="outlined"
-                  sx={{
-                    height: 32,
-                    borderRadius: 999,
-                    fontWeight: 800,
-                    bgcolor: alpha(theme.palette.background.paper, 0.8),
-                    borderColor: alpha(theme.palette.primary.main, 0.14),
-                  }}
-                />
-                {!isAuthenticated && (
-                  <Chip
-                    label="Javni pregled profila"
-                    variant="outlined"
-                    sx={{
-                      height: 32,
-                      borderRadius: 999,
-                      fontWeight: 800,
-                      bgcolor: alpha(theme.palette.background.paper, 0.8),
-                      borderColor: alpha(theme.palette.primary.main, 0.14),
-                    }}
-                  />
-                )}
-              </Stack>
-            </Stack>
-          </Box>
-
-          <Paper
-            elevation={0}
-            sx={{
-              p: { xs: 2, md: 2.4 },
-              borderRadius: { xs: 3, md: 3.2 },
-              border: '1px solid',
-              borderColor: alpha(theme.palette.divider, 0.1),
-              bgcolor: alpha(theme.palette.background.paper, 0.98),
-              boxShadow: `0 18px 40px ${alpha(theme.palette.common.black, 0.045)}`,
-            }}
-          >
-            <Stack spacing={2.2}>
-              <Box>
-                <Typography sx={{ fontWeight: 900, color: 'secondary.main', fontSize: { xs: '1rem', md: '1.08rem' } }}>
-                  Pretraga i filteri
-                </Typography>
-                <Typography sx={{ mt: 0.25, color: 'text.secondary', fontSize: '0.86rem', lineHeight: 1.55 }}>
-                  {isAuthenticated
-                    ? 'Suzite prikaz i lakše pronađite odgovarajućeg izvođača.'
-                    : 'Pregled ostaje otvoren i brz, a filteri vam pomažu da odmah dođete do prave usluge ili lokacije.'}
-                </Typography>
-              </Box>
-
-              <BaseInput
-                fullWidth
-                placeholder="Pretražite po imenu, usluzi ili lokaciji"
-                value={userStore.contractorSearchInputValue}
-                onChange={(e) => {
-                  userStore.setContractorSearchInputValue(e.target.value);
-                  debouncedSearch(e.target.value);
-                }}
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    borderRadius: 2.5,
-                    bgcolor: alpha(theme.palette.background.paper, 0.74),
-                  },
-                }}
-                slotProps={{ input: { startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.disabled' }} /> } }}
-              />
-
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                {userStore.availableServiceCategories.map((category) => {
-                  const selected = userStore.selectedContractorCategories.includes(category);
-                  return (
-                    <Chip
-                      key={category}
-                      clickable
-                      label={category}
-                      color={selected ? 'primary' : 'default'}
-                      variant={selected ? 'filled' : 'outlined'}
-                      onClick={() => userStore.toggleSelectedContractorCategory(category)}
-                      sx={{
-                        fontWeight: 700,
-                        borderRadius: 999,
-                        bgcolor: selected ? undefined : alpha(theme.palette.background.paper, 0.74),
-                      }}
-                    />
-                  );
-                })}
-              </Box>
-
-              <Grid container spacing={2}>
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <BaseInput
-                    select
-                    fullWidth
-                    label="Lokacija"
-                    value={userStore.selectedContractorLocation}
-                    onChange={(e) => userStore.setSelectedContractorLocation(e.target.value)}
-                  >
-                    <MenuItem value="">Sve lokacije</MenuItem>
-                    {userStore.contractorLocations.map((location) => (
-                      <MenuItem key={location} value={location}>
-                        {location}
-                      </MenuItem>
-                    ))}
-                  </BaseInput>
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <BaseInput
-                    select
-                    fullWidth
-                    label="Tip izvođača"
-                    value={userStore.selectedContractorLegalType}
-                    onChange={(e) => userStore.setSelectedContractorLegalType(e.target.value as 'ALL' | 'FIZICKA_OSOBA' | 'FIRMA')}
-                  >
-                    <MenuItem value="ALL">Svi</MenuItem>
-                    <MenuItem value="FIZICKA_OSOBA">Fizička osoba</MenuItem>
-                    <MenuItem value="FIRMA">Firma</MenuItem>
-                  </BaseInput>
-                </Grid>
-
-                <Grid size={{ xs: 12, md: 4 }}>
-                  <BaseInput
-                    select
-                    fullWidth
-                    label="Minimalna ocjena"
-                    value={String(userStore.minContractorRating)}
-                    onChange={(e) => userStore.setMinContractorRating(Number(e.target.value))}
-                  >
-                    <MenuItem value="0">Bez ogranicenja</MenuItem>
-                    <MenuItem value="3">3.0+</MenuItem>
-                    <MenuItem value="4">4.0+</MenuItem>
-                    <MenuItem value="4.5">4.5+</MenuItem>
-                  </BaseInput>
-                </Grid>
-              </Grid>
-
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-                <BaseButton
-                  variant="contained"
-                  color="primary"
-                  onClick={() => userStore.saveCurrentContractorFiltersAsDefault()}
-                  sx={{ fontWeight: 800, borderRadius: 999 }}
-                >
-                  Spremi postavke
-                </BaseButton>
-                <BaseButton
-                  variant="outlined"
-                  color="secondary"
-                  onClick={() => userStore.resetContractorFilters()}
-                  sx={{ fontWeight: 700, borderRadius: 999 }}
-                >
-                  Reset
-                </BaseButton>
-              </Stack>
-            </Stack>
-          </Paper>
-
-          {userStore.userListError && (
-            <Alert severity="error" sx={{ borderRadius: 3 }}>
-              {userStore.userListError}
-            </Alert>
-          )}
-
-          {userStore.isLoadingUsers && userStore.contractorProfiles.length === 0 ? (
-            <Box sx={{ py: 8, display: 'flex', justifyContent: 'center' }}>
-              <CircularProgress color="primary" />
+    <BaseContainer maxWidth={false} disableGutters animate={false}>
+      <Stack spacing={2.5} sx={{ pb: { xs: 2, md: 4 } }}>
+        <Paper component="header" variant="outlined" sx={{
+          p: { xs: 2, sm: 3 }, borderRadius: 2,
+          backgroundImage: (theme) => `linear-gradient(115deg, ${alpha(theme.palette.primary.main, 0.2)}, ${theme.palette.background.paper} 75%)`,
+        }}>
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <Box sx={{ display: 'grid', placeItems: 'center', width: 48, height: 48, flexShrink: 0,
+              borderRadius: 1.5, bgcolor: 'primary.main', color: 'primary.contrastText' }}>
+              <EngineeringRoundedIcon fontSize="large" />
             </Box>
+            <Box>
+              <Typography component="h1" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' }, fontWeight: 800, lineHeight: 1.2 }}>
+                Pronađi izvođača
+              </Typography>
+              <Typography color="text.secondary" variant="body2" sx={{ mt: 0.75, lineHeight: 1.6 }}>
+                Firme, majstori i stručnjaci za vaš sljedeći projekt.
+              </Typography>
+            </Box>
+          </Stack>
+        </Paper>
+
+        <Paper component="section" aria-label="Pretraga i filtri izvođača" variant="outlined" sx={{ p: { xs: 1.5, sm: 2.5 }, borderRadius: 2 }}>
+          <Stack spacing={2}>
+            <Box component="form" role="search" onSubmit={(event: React.FormEvent) => {
+              event.preventDefault(); debouncedSearch.flush(); debouncedLocation.flush();
+            }}>
+              <BaseInput size="small" placeholder="Naziv, usluga ili lokacija…"
+                value={userStore.contractorSearchInputValue}
+                onChange={(event) => {
+                  userStore.setContractorSearchInputValue(event.target.value);
+                  debouncedSearch(event.target.value);
+                }}
+                slotProps={{
+                  htmlInput: { 'aria-label': 'Pretraži izvođače po nazivu, usluzi ili lokaciji' },
+                  input: {
+                    startAdornment: <InputAdornment position="start"><SearchRoundedIcon color="action" /></InputAdornment>,
+                    endAdornment: userStore.contractorSearchInputValue ? (
+                      <InputAdornment position="end"><IconButton size="small" aria-label="Očisti pretragu" onClick={clearSearch}><CloseRoundedIcon fontSize="small" /></IconButton></InputAdornment>
+                    ) : undefined,
+                  },
+                }} />
+            </Box>
+
+            <ToggleButtonGroup value={userStore.selectedContractorLegalType} exclusive fullWidth color="primary"
+              aria-label="Tip izvođača" onChange={(_event, value: 'ALL' | LegalType | null) => {
+                if (value) userStore.setSelectedContractorLegalType(value);
+              }} sx={{ '& .MuiToggleButton-root': { flex: 1, minWidth: 0, minHeight: 44, px: 0.5,
+                fontSize: { xs: '0.78rem', sm: '0.875rem' }, lineHeight: 1.3, fontWeight: 750,
+                '&.Mui-selected': { bgcolor: 'primary.main', color: 'primary.contrastText', '&:hover': { bgcolor: 'primary.dark' } } } }}>
+              <ToggleButton value="ALL">Svi</ToggleButton>
+              <ToggleButton value="FIRMA">Firme</ToggleButton>
+              <ToggleButton value="FIZICKA_OSOBA">Fizičke osobe</ToggleButton>
+            </ToggleButtonGroup>
+
+            <Grid container spacing={1.5}>
+              <Grid size={{ xs: 6, sm: 4 }} sx={{ minWidth: 0 }}>
+                <Autocomplete freeSolo options={userStore.contractorLocations}
+                  value={userStore.selectedContractorLocation || null} inputValue={locationInput}
+                  onInputChange={(_event, value, reason) => {
+                    if (reason === 'input' || reason === 'clear') { setLocationInput(value); debouncedLocation(value); }
+                  }}
+                  onChange={(_event, value) => {
+                    debouncedLocation.cancel(); setLocationInput(value || ''); userStore.setSelectedContractorLocation(value?.trim() || '');
+                  }}
+                  clearText="Očisti lokaciju" openText="Prikaži lokacije" closeText="Zatvori lokacije"
+                  renderInput={(params) => <BaseInput {...params} label="Lokacija" placeholder="Sve lokacije" helperText="Puni naziv mjesta" size="small" slotProps={{ inputLabel: { shrink: true } }} />} />
+              </Grid>
+              <Grid size={{ xs: 6, sm: 4 }} sx={{ minWidth: 0 }}>
+                <BaseInput select size="small" label="Djelatnost" value={userStore.selectedContractorCategories}
+                  onChange={(event) => {
+                    const categories = typeof event.target.value === 'string' ? event.target.value.split(',') : event.target.value;
+                    userStore.setSelectedContractorCategories(categories as JobCategory[]);
+                    setHasSavedCategories(false);
+                  }} slotProps={{ inputLabel: { shrink: true }, select: {
+                    multiple: true, displayEmpty: true,
+                    renderValue: (value) => {
+                      const categories = value as JobCategory[];
+                      return categories.length === 0 ? 'Sve djelatnosti' : categories.length === 1 ? categories[0] : `Odabrano: ${categories.length}`;
+                    },
+                  } }}>
+                  {userStore.availableServiceCategories.map((category) => (
+                    <MenuItem key={category} value={category}>
+                      <Checkbox checked={userStore.selectedContractorCategories.includes(category)} size="small" sx={{ p: 0.5, mr: 1 }} />{category}
+                    </MenuItem>
+                  ))}
+                </BaseInput>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 4 }}>
+                <BaseInput select size="small" label="Minimalna ocjena" value={userStore.minContractorRating}
+                  disabled={!hasRatings} onChange={(event) => userStore.setMinContractorRating(Number(event.target.value))}>
+                  <MenuItem value={0}>Sve ocjene</MenuItem><MenuItem value={3}>3,0 i više</MenuItem>
+                  <MenuItem value={4}>4,0 i više</MenuItem><MenuItem value={4.5}>4,5 i više</MenuItem>
+                </BaseInput>
+              </Grid>
+            </Grid>
+
+            {hasActiveFilters && (
+              <Stack direction="row" useFlexGap flexWrap="wrap" gap={0.75} aria-label="Aktivni filtri">
+                {userStore.contractorSearchQuery.trim() && <Chip size="small" label={`Pretraga: ${userStore.contractorSearchQuery.trim()}`} onDelete={clearSearch} sx={{ maxWidth: '100%' }} />}
+                {userStore.selectedContractorCategories.map((category) => <Chip key={category} size="small" color="primary" variant="outlined" label={category} onDelete={() => {
+                  userStore.toggleSelectedContractorCategory(category); setHasSavedCategories(false);
+                }} />)}
+                {userStore.selectedContractorLegalType !== 'ALL' && <Chip size="small" label={userStore.selectedContractorLegalType === 'FIRMA' ? 'Firme' : 'Fizičke osobe'} onDelete={() => userStore.setSelectedContractorLegalType('ALL')} />}
+                {userStore.selectedContractorLocation && <Chip size="small" label={userStore.selectedContractorLocation} onDelete={clearLocation} sx={{ maxWidth: '100%' }} />}
+                {userStore.minContractorRating > 0 && hasRatings && <Chip size="small" label={`Ocjena ${userStore.minContractorRating.toLocaleString('hr')}+`} onDelete={() => userStore.setMinContractorRating(0)} />}
+              </Stack>
+            )}
+            {(hasActiveFilters || authenticationStore.user) && (
+              <Stack direction="row" useFlexGap flexWrap="wrap" gap={1} justifyContent="space-between">
+                {hasActiveFilters && <Button size="small" onClick={resetFilters} startIcon={<RefreshRoundedIcon />}>Očisti filtre</Button>}
+                {authenticationStore.user && <Button size="small" startIcon={<BookmarkBorderRoundedIcon />} onClick={() => {
+                  userStore.saveCurrentContractorFiltersAsDefault(); setHasSavedCategories(true);
+                }}>Zapamti djelatnosti</Button>}
+              </Stack>
+            )}
+            {hasSavedCategories && <Alert severity="success" onClose={() => setHasSavedCategories(false)}>Djelatnosti su zapamćene za ovu sesiju.</Alert>}
+          </Stack>
+        </Paper>
+
+        {reviewStore.reviewListError && <Alert severity="warning" action={<Button color="inherit" size="small" onClick={() => { void reviewStore.loadReviews(); }}>Pokušaj ponovno</Button>}>
+          Ocjene trenutačno nisu dostupne. Izvođači su prikazani bez filtriranja po ocjeni.
+        </Alert>}
+
+        <Box component="section" aria-label="Rezultati pretrage izvođača" aria-busy={isLoading}>
+          <Stack direction="row" useFlexGap flexWrap="wrap" gap={1.5} alignItems="center" justifyContent="space-between" sx={{ mb: 1.75 }}>
+            <Typography role="status" aria-live="polite" variant="body2" color="text.secondary" sx={{ fontWeight: 650 }}>
+              {isLoading ? 'Učitavanje izvođača…' : userStore.contractorListError ? 'Rezultati pretrage' : `${contractors.length} ${contractorLabel}`}
+            </Typography>
+            <BaseInput select size="small" label="Poredaj po" value={hasRatings ? userStore.contractorSort : 'name'}
+              onChange={(event) => userStore.setContractorSort(event.target.value as ContractorSort)} sx={{ width: 190, maxWidth: '100%' }}>
+              <MenuItem value="rating" disabled={!hasRatings}>Najbolje ocjene</MenuItem>
+              <MenuItem value="reviews" disabled={!hasRatings}>Najviše recenzija</MenuItem>
+              <MenuItem value="name">Naziv A–Ž</MenuItem>
+            </BaseInput>
+          </Stack>
+          {userStore.contractorListError ? (
+            <Alert severity="error" action={<Button color="inherit" size="small" onClick={() => { void loadContractors(); }}>Pokušaj ponovno</Button>}>
+              {userStore.contractorListError}
+            </Alert>
+          ) : isLoading ? (
+            <Grid container spacing={1.5} aria-label="Učitavanje izvođača">
+              {loadingCards.map((id) => <Grid key={id} size={{ xs: 12, lg: 6 }}><Skeleton variant="rounded" height={206} sx={{ borderRadius: 1.5 }} /></Grid>)}
+            </Grid>
+          ) : contractors.length === 0 ? (
+            <Paper variant="outlined" sx={{ p: { xs: 3, sm: 5 }, borderRadius: 2, textAlign: 'center' }}>
+              <SearchOffRoundedIcon sx={{ fontSize: 44, color: 'primary.light', mb: 1 }} />
+              <Typography component="h2" variant="h6" fontWeight={750}>Nema izvođača za odabrane filtre</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mt: 1, mb: 2 }}>Pokušajte s drugim nazivom, lokacijom ili djelatnosti.</Typography>
+              {hasActiveFilters && <Button variant="outlined" onClick={resetFilters}>Očisti filtre</Button>}
+            </Paper>
           ) : (
-            <Grid container spacing={2.5}>
-              {userStore.filteredContractors.map((contractor) => {
-                const averageRating = userStore.getContractorAverageRating(contractor.id);
-                const reviewCount = userStore.getContractorReviewCount(contractor.id);
-
-                return (
-                  <Grid key={contractor.id} size={{ xs: 12, md: 6 }}>
-                    <Paper
-                      elevation={0}
-                      sx={{
-                        p: 3,
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        borderRadius: 4,
-                        border: '1px solid',
-                        borderColor: alpha(theme.palette.divider, 0.12),
-                        bgcolor: 'background.paper',
-                        backgroundImage: `linear-gradient(180deg, ${alpha(theme.palette.primary.light, 0.14)} 0%, ${theme.palette.background.paper} 48%)`,
-                        transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
-                        '&:hover': {
-                          transform: { md: 'translateY(-2px)' },
-                          boxShadow: `0 14px 28px ${alpha(theme.palette.common.black, 0.06)}`,
-                          borderColor: alpha(theme.palette.primary.main, 0.16),
-                        },
-                      }}
-                    >
-                      <Stack spacing={2} sx={{ height: '100%' }}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
-                          <Stack direction="row" alignItems="center" spacing={1.25} sx={{ minWidth: 0 }}>
-                            <ProfileAvatar displayName={contractor.displayName} imageUrl={contractor.profileImageUrl}
-                              sx={{ width: 44, height: 44, bgcolor: 'primary.dark', color: 'primary.contrastText', fontWeight: 800 }} />
-                            <Typography variant="h6" sx={{ fontWeight: 900, overflowWrap: 'anywhere', minWidth: 0 }}>
-                              {contractor.displayName}
-                            </Typography>
-                          </Stack>
-                          <Chip
-                            icon={contractor.legalType === 'FIRMA' ? <BusinessIcon /> : <PersonIcon />}
-                            label={contractor.legalType === 'FIRMA' ? 'Firma' : 'Fizička osoba'}
-                            size="small"
-                            sx={{ fontWeight: 700 }}
-                          />
-                        </Stack>
-
-                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                          {contractor.bio}
-                        </Typography>
-
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <Rating value={averageRating} precision={0.1} readOnly size="small" />
-                          <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>
-                            {averageRating.toFixed(1)} ({reviewCount} recenzija)
-                          </Typography>
-                        </Stack>
-
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <LocationOnIcon sx={{ fontSize: 18, color: 'text.secondary' }} />
-                          <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary' }}>
-                            {contractor.location}
-                          </Typography>
-                        </Stack>
-
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.8 }}>
-                          {(contractor.serviceCategories || []).map((category) => (
-                            <Chip key={category} label={category} size="small" variant="outlined" sx={{ fontWeight: 700 }} />
-                          ))}
-                        </Box>
-
-                        <Box sx={{ pt: 0.4, mt: 'auto' }}>
-                          <BaseButton
-                            variant="outlined"
-                            color="secondary"
-                            onClick={() => navigate(`/profil/${contractor.id}`)}
-                            sx={{ minHeight: 40, borderRadius: 999, fontWeight: 800 }}
-                          >
-                            Otvori profil
-                          </BaseButton>
-                        </Box>
-                      </Stack>
-                    </Paper>
-                  </Grid>
-                );
-              })}
+            <Grid container spacing={1.5}>
+              {contractors.map((contractor) => <Grid key={contractor.id} size={{ xs: 12, lg: 6 }} sx={{ minWidth: 0 }}>
+                <ContractorCard contractor={contractor}
+                  averageRating={hasRatings ? userStore.getContractorAverageRating(contractor.id) : undefined}
+                  reviewCount={hasRatings ? userStore.getContractorReviewCount(contractor.id) : undefined} />
+              </Grid>)}
             </Grid>
           )}
-        </Stack>
-      </BaseContainer>
-    </Box>
+        </Box>
+      </Stack>
+    </BaseContainer>
   );
 });
 

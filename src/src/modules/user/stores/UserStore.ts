@@ -11,14 +11,17 @@ import UserService from '@/modules/user/services/UserService';
 import ProfileImageKind from '@/modules/user/models/ProfileImageKind';
 
 type ContractorLegalTypeFilter = 'ALL' | LegalType;
+export type ContractorSort = 'rating' | 'reviews' | 'name';
 
 export default class UserStore {
   rootStore: RootStore;
   userService: UserService;
   users: IUserProfile[] = [];
   isLoadingUsers = false;
+  isLoadingContractors = false;
   isSavingProfile = false;
   userListError: string | null = null;
+  contractorListError: string | null = null;
   selectedUserError: string | null = null;
   profileSaveError: string | null = null;
   savingProfileImageKind: ProfileImageKind | null = null;
@@ -30,6 +33,9 @@ export default class UserStore {
   selectedContractorLocation = '';
   selectedContractorLegalType: ContractorLegalTypeFilter = 'ALL';
   minContractorRating = 0;
+  contractorSort: ContractorSort = 'rating';
+  private contractorRequestId = 0;
+  private knownContractorLocations: string[] = [];
   profileDisplayName = '';
   profileLegalType: LegalType = 'FIRMA';
   profilePhone = '';
@@ -70,22 +76,31 @@ export default class UserStore {
   };
 
   loadContractors = async (query: IGetContractorsQuery = {}) => {
-    this.isLoadingUsers = true;
-    this.userListError = null;
+    const requestId = ++this.contractorRequestId;
+    this.isLoadingContractors = true;
+    this.contractorListError = null;
 
     try {
       const response = await this.userService.getContractorsAsync(query);
 
       runInAction(() => {
-        this.replaceUsers(response.data.map(this.mapUserResponseToModel), 'IZVODJAC');
+        if (requestId !== this.contractorRequestId) return;
+        const contractors = response.data.map(this.mapUserResponseToModel);
+        this.replaceUsers(contractors, 'IZVODJAC');
+        this.knownContractorLocations = Array.from(new Set([
+          ...this.knownContractorLocations,
+          ...contractors.map((contractor) => contractor.location.trim()).filter(Boolean),
+        ]));
       });
     } catch (error) {
       runInAction(() => {
-        this.userListError = this.getApiErrorMessage(error, 'Dohvat izvođača nije uspio.');
+        if (requestId !== this.contractorRequestId) return;
+        this.contractorListError = this.getApiErrorMessage(error, 'Dohvat izvođača nije uspio.');
       });
     } finally {
       runInAction(() => {
-        this.isLoadingUsers = false;
+        if (requestId !== this.contractorRequestId) return;
+        this.isLoadingContractors = false;
       });
     }
   };
@@ -125,6 +140,7 @@ export default class UserStore {
   setSelectedContractorLocation = (value: string) => { this.selectedContractorLocation = value; };
   setSelectedContractorLegalType = (value: ContractorLegalTypeFilter) => { this.selectedContractorLegalType = value; };
   setMinContractorRating = (value: number) => { this.minContractorRating = value; };
+  setContractorSort = (value: ContractorSort) => { this.contractorSort = value; };
   setProfileDisplayName = (value: string) => { this.profileDisplayName = value; this.profileSaveError = null; };
   setProfileLegalType = (value: LegalType) => { this.profileLegalType = value; this.profileSaveError = null; };
   setProfilePhone = (value: string) => {
@@ -164,6 +180,7 @@ export default class UserStore {
     this.selectedContractorLocation = '';
     this.selectedContractorLegalType = 'ALL';
     this.minContractorRating = 0;
+    this.contractorSort = 'rating';
   };
 
   initializeContractorFiltersForCurrentUser = () => {
@@ -189,7 +206,7 @@ export default class UserStore {
   };
 
   get contractorLocations() {
-    return Array.from(new Set(this.contractorProfiles.map((contractor) => contractor.location))).sort();
+    return [...this.knownContractorLocations].sort((a, b) => a.localeCompare(b, 'hr'));
   }
 
   getUserById(id: string) {
@@ -215,8 +232,12 @@ export default class UserStore {
   };
 
   get filteredContractors() {
+    const { isLoadingReviews, reviewListError } = this.rootStore.reviewStore;
+    const canUseRatings = !isLoadingReviews && !reviewListError;
+
     return this.contractorProfiles
       .filter((contractor) => {
+        if (!canUseRatings) return true;
         const avgRating = this.getContractorAverageRating(contractor.id);
         if (avgRating < this.minContractorRating) {
           return false;
@@ -224,7 +245,17 @@ export default class UserStore {
 
         return true;
       })
-      .sort((a, b) => this.getContractorAverageRating(b.id) - this.getContractorAverageRating(a.id));
+      .sort((a, b) => {
+        const nameDifference = a.displayName.localeCompare(b.displayName, 'hr', { sensitivity: 'base' });
+        const nameOrder = nameDifference || a.id.localeCompare(b.id);
+        if (!canUseRatings || this.contractorSort === 'name') return nameOrder;
+
+        const ratingDifference = this.getContractorAverageRating(b.id) - this.getContractorAverageRating(a.id);
+        const reviewCountDifference = this.getContractorReviewCount(b.id) - this.getContractorReviewCount(a.id);
+        return this.contractorSort === 'reviews'
+          ? reviewCountDifference || ratingDifference || nameOrder
+          : ratingDifference || reviewCountDifference || nameOrder;
+      });
   }
 
   get availableServiceCategories() {
