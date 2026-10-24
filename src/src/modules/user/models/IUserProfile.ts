@@ -9,6 +9,8 @@ export interface IUserProfile {
   email: string;
   phone?: string;
   isPhoneVisible?: boolean;
+  profileImageUrl?: string | null;
+  coverImageUrl?: string | null;
   bio: string;
   location: string;
   joinedAt: Date;

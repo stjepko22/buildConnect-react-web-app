@@ -129,6 +129,11 @@ export default class HomeStore {
       .slice(0, 3);
   }
 
+  updateProfile = (profile: IUserProfileResponse) => {
+    if (this.ownProfile?.id === profile.id) this.ownProfile = { ...profile };
+    this.contractors = this.contractors.map((contractor) => contractor.id === profile.id ? { ...profile } : contractor);
+  };
+
   get openJobCount() {
     return this.jobs.filter((job) => job.status === 'OPEN').length;
   }

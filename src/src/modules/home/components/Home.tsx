@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
-  Alert, Avatar, Box, Button, ButtonBase, IconButton, InputAdornment, Paper,
+  Alert, Box, Button, ButtonBase, IconButton, InputAdornment, Paper,
   Skeleton, Stack, ToggleButton, ToggleButtonGroup, Typography, alpha, useTheme,
 } from '@mui/material';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
@@ -22,6 +22,7 @@ import { useRootStore } from '@/core/hooks/useRootStore';
 import { JobCategory } from '@/modules/marketplace/jobs/constants/jobCategories';
 import HomeContractorCard from './HomeContractorCard';
 import HomeJobCard from './HomeJobCard';
+import ProfileAvatar from '@/modules/user/components/ProfileAvatar';
 
 type SearchTarget = 'contractors' | 'jobs';
 
@@ -158,9 +159,9 @@ const Home: React.FC = observer(() => {
                 <Paper variant="outlined" sx={{ borderRadius: 1.5, overflow: 'hidden', borderColor: alpha(theme.palette.primary.light, 0.25) }}>
                   <ButtonBase component={RouterLink} to={`/profil/${user.id}`} onClick={scrollToTop}
                     aria-label="Otvori moj profil" sx={{ p: 1.75, width: '100%', textAlign: 'left', justifyContent: 'flex-start', gap: 1.5 }}>
-                    <Avatar sx={{ width: 48, height: 48, borderRadius: 1, bgcolor: alpha(theme.palette.primary.main, 0.18), color: 'primary.light', fontWeight: 800 }}>
+                    <ProfileAvatar displayName={profile?.displayName || user.displayName} imageUrl={profile?.profileImageUrl} sx={{ width: 48, height: 48, borderRadius: 1, bgcolor: alpha(theme.palette.primary.main, 0.18), color: 'primary.light', fontWeight: 800 }}>
                       {profileInitials}
-                    </Avatar>
+                    </ProfileAvatar>
                     <Box sx={{ flex: 1, minWidth: 0 }}>
                       <Typography noWrap sx={{ fontWeight: 800, fontSize: '0.9rem' }}>{profile?.displayName || user.displayName}</Typography>
                       {homeStore.isLoadingProfile ? <Skeleton width="65%" /> : (

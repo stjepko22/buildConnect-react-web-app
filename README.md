@@ -36,3 +36,13 @@ npm run build
 ## Napomena
 
 Za puni rad aplikacije backend mora biti pokrenut.
+
+## Fotografije profila
+
+Na vlastitom profilu odaberite **Uredi fotografije**. Profilna i naslovna
+fotografija spremaju se zasebno, nakon pregleda odabrane slike i pritiska na
+**Spremi sliku**. Podržani su JPG, PNG i WebP do 5 MiB po fotografiji.
+
+Fotografije su javne. **Ukloni** briše samo odabranu vrstu fotografije.
+Odustajanje od uređivanja tekstualnih podataka ne poništava već spremljene
+fotografije. Za rad je potrebna backend migracija `AddUserProfileImages`.

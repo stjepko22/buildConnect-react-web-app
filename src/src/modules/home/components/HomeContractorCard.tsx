@@ -1,9 +1,10 @@
 import { Link as RouterLink } from 'react-router-dom';
-import { Avatar, Box, CardActionArea, Chip, Stack, Typography, alpha } from '@mui/material';
+import { Box, CardActionArea, Chip, Stack, Typography, alpha } from '@mui/material';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
 import PersonRoundedIcon from '@mui/icons-material/PersonRounded';
 import { IUserProfileResponse } from '@/api/models/users/IUserProfileResponse';
+import ProfileAvatar from '@/modules/user/components/ProfileAvatar';
 
 type HomeContractorCardProps = {
   contractor: IUserProfileResponse;
@@ -32,7 +33,7 @@ export default function HomeContractorCard({ contractor }: HomeContractorCardPro
     >
       <Stack spacing={1.25}>
         <Stack direction="row" spacing={1.25} alignItems="flex-start">
-          <Avatar
+          <ProfileAvatar displayName={contractor.displayName} imageUrl={contractor.profileImageUrl}
             sx={{
               width: 42,
               height: 42,
@@ -43,7 +44,7 @@ export default function HomeContractorCard({ contractor }: HomeContractorCardPro
             }}
           >
             {initials || <PersonRoundedIcon fontSize="small" />}
-          </Avatar>
+          </ProfileAvatar>
           <Box sx={{ minWidth: 0, flex: 1 }}>
             <Typography
               component="h3"

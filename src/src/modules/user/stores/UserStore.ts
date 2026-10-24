@@ -8,6 +8,7 @@ import { JOB_CATEGORIES, JobCategory } from '@/modules/marketplace/jobs/constant
 import { IUserProfile } from '@/modules/user/models/IUserProfile';
 import { LegalType } from '@/modules/user/models/LegalType';
 import UserService from '@/modules/user/services/UserService';
+import ProfileImageKind from '@/modules/user/models/ProfileImageKind';
 
 type ContractorLegalTypeFilter = 'ALL' | LegalType;
 
@@ -20,6 +21,9 @@ export default class UserStore {
   userListError: string | null = null;
   selectedUserError: string | null = null;
   profileSaveError: string | null = null;
+  savingProfileImageKind: ProfileImageKind | null = null;
+  profileImageUploadProgress = 0;
+  profileImageErrors: Partial<Record<ProfileImageKind, string>> = {};
   contractorSearchInputValue = '';
   contractorSearchQuery = '';
   selectedContractorCategories: JobCategory[] = [];
@@ -246,6 +250,7 @@ export default class UserStore {
     this.profileLocation = user.location;
     this.profileServiceCategories = [...(user.serviceCategories || [])];
     this.profileSaveError = null;
+    this.profileImageErrors = {};
   };
 
   resetProfileForm = () => {
@@ -322,6 +327,51 @@ export default class UserStore {
       runInAction(() => {
         this.isSavingProfile = false;
       });
+    }
+  };
+
+  uploadCurrentUserImage = async (kind: ProfileImageKind, file: File) => {
+    return this.saveCurrentUserImage(kind, file);
+  };
+
+  removeCurrentUserImage = async (kind: ProfileImageKind) => {
+    return this.saveCurrentUserImage(kind);
+  };
+
+  clearProfileImageError = (kind: ProfileImageKind) => {
+    this.profileImageErrors = { ...this.profileImageErrors, [kind]: undefined };
+  };
+
+  private saveCurrentUserImage = async (kind: ProfileImageKind, file?: File) => {
+    if (!this.rootStore.authenticationStore.user || this.savingProfileImageKind) return false;
+    this.savingProfileImageKind = kind;
+    this.profileImageUploadProgress = 0;
+    this.clearProfileImageError(kind);
+
+    try {
+      const response = file
+        ? await this.userService.uploadCurrentUserImageAsync(kind, file, (progress) => {
+          runInAction(() => { this.profileImageUploadProgress = progress; });
+        })
+        : await this.userService.deleteCurrentUserImageAsync(kind);
+
+      runInAction(() => {
+        // The response contains the complete owner profile, including the private phone.
+        // Keep text form state untouched while a photograph is saved.
+        this.upsertUser(this.mapUserResponseToModel(response.data));
+        this.rootStore.homeStore.updateProfile(response.data);
+      });
+      return true;
+    } catch (error) {
+      runInAction(() => {
+        this.profileImageErrors = {
+          ...this.profileImageErrors,
+          [kind]: this.getApiErrorMessage(error, file ? 'Spremanje slike nije uspjelo. Pokušajte ponovno.' : 'Uklanjanje slike nije uspjelo. Pokušajte ponovno.'),
+        };
+      });
+      return false;
+    } finally {
+      runInAction(() => { this.savingProfileImageKind = null; });
     }
   };
 

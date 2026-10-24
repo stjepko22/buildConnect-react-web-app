@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Alert, Box, CircularProgress, Stack, Typography } from '@mui/material';
@@ -13,30 +13,41 @@ const EditProfilePage: React.FC = observer(() => {
   const location = useLocation();
   const { authenticationStore, userStore } = useRootStore();
   const authenticatedUser = authenticationStore.user;
+  const authenticatedUserId = authenticatedUser?.id;
+  const [initializedUserId, setInitializedUserId] = useState<string>();
+  const [hasProfileLoadError, setHasProfileLoadError] = useState(false);
   const currentUser = authenticatedUser ? userStore.getUserById(authenticatedUser.id) : null;
   const navigationState = location.state as { returnTo?: string; returnLabel?: string } | null;
   const backTarget = navigationState?.returnTo || (authenticatedUser ? `/profil/${authenticatedUser.id}` : '/dashboard');
   const backLabel = navigationState?.returnLabel || 'Povratak na profil';
 
   useEffect(() => {
-    if (!authenticatedUser) {
+    if (!authenticatedUserId) {
       return;
     }
 
-    void userStore.loadUserById(authenticatedUser.id);
-  }, [authenticatedUser, userStore]);
+    let isActive = true;
+    void userStore.loadUserById(authenticatedUserId).then((profile) => {
+      if (isActive) {
+        if (profile) userStore.initializeProfileForm(profile);
+        setHasProfileLoadError(!profile);
+        setInitializedUserId(authenticatedUserId);
+      }
+    });
+    return () => { isActive = false; };
+  }, [authenticatedUserId, userStore]);
 
   useEffect(() => {
-    if (currentUser) {
-      userStore.initializeProfileForm(currentUser);
+    if (location.hash === '#fotografije' && initializedUserId === authenticatedUserId) {
+      document.getElementById('fotografije')?.scrollIntoView({ block: 'start' });
     }
-  }, [currentUser, userStore]);
+  }, [location.hash, initializedUserId, authenticatedUserId]);
 
   if (!authenticatedUser) {
     return null;
   }
 
-  if (userStore.isLoadingUsers && !currentUser) {
+  if (initializedUserId !== authenticatedUserId) {
     return (
       <BaseContainer maxWidth="md" withPadding={false}>
         <Box sx={{ pt: 1, display: 'flex', justifyContent: 'center' }}>
@@ -46,7 +57,7 @@ const EditProfilePage: React.FC = observer(() => {
     );
   }
 
-  if (!currentUser) {
+  if (!currentUser || hasProfileLoadError) {
     return (
       <BaseContainer maxWidth="md" withPadding={false}>
         <Alert severity="error" sx={{ mt: 1, borderRadius: 3 }}>

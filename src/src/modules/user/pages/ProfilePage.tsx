@@ -7,7 +7,6 @@ import {
   Typography,
   Grid,
   Paper,
-  Avatar,
   Chip,
   Stack,
   Divider,
@@ -20,13 +19,12 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
-import WorkOutlineRoundedIcon from '@mui/icons-material/WorkOutlineRounded';
-import StarRoundedIcon from '@mui/icons-material/StarRounded';
 
 import BaseButton from '@/core/components/atoms/buttons/BaseButton';
 import BaseContainer from '@/core/components/atoms/containers/BaseContainer';
 import { useRootStore } from '@/core/hooks/useRootStore';
 import JobCard from '@/core/components/molecules/cards/JobCard';
+import ProfileHeader from '@/modules/user/components/ProfileHeader';
 
 const ProfilePage: React.FC = observer(() => {
   const { id } = useParams<{ id: string }>();
@@ -84,23 +82,6 @@ const ProfilePage: React.FC = observer(() => {
     boxShadow: `0 16px 36px ${alpha(theme.palette.common.black, 0.035)}`,
   };
 
-  const headerSubtitle = isOwnProfile
-    ? 'Na jednom mjestu vidite kako vaš profil izgleda javno i brzo pristupate uređivanju.'
-    : isContractor
-      ? 'Profil prikazuje lokaciju, recenzije i usluge koje izvođač nudi investitorima.'
-      : 'Ovdje su objavljeni oglasi, osnovni podaci i javna prisutnost investitora.';
-  const roleLabel = isContractor ? 'Izvodjac profil' : 'Investitor profil';
-  const profilePageTitle = isOwnProfile
-    ? 'Uredite svoj profil'
-    : isContractor
-      ? 'Profil izvođača'
-      : 'Profil investitora';
-  const profilePageSubtitle = isOwnProfile
-    ? 'Pregledajte svoje javne podatke i uredite ih po potrebi.'
-    : isContractor
-      ? 'Lokacija, usluge i recenzije koje investitorima pomažu pri odabiru.'
-      : 'Osnovni podaci i aktivni oglasi investitora na jednom mjestu.';
-  void headerSubtitle;
   return (
     <BaseContainer maxWidth={false} disableGutters animate={false}>
       <Box sx={{ width: '100%' }}>
@@ -113,125 +94,12 @@ const ProfilePage: React.FC = observer(() => {
           Natrag
         </BaseButton>
 
-        <Stack
-          direction={{ xs: 'column', md: 'row' }}
-          justifyContent="space-between"
-          alignItems={{ xs: 'flex-start', md: 'flex-end' }}
-          spacing={2}
-          sx={{
-            mb: { xs: 2.8, md: 3.3 },
-            px: { md: 0.15, lg: 0.25 },
-            py: { md: 0.75, lg: 0.95 },
-            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.light, 0.16)} 0%, ${alpha(theme.palette.background.paper, 0.98)} 34%, ${alpha(theme.palette.primary.main, 0.05)} 100%)`,
-            borderBottom: '1px solid',
-            borderColor: alpha(theme.palette.primary.main, 0.07),
-          }}
-        >
-          <Box sx={{ maxWidth: 860 }}>
-            <Chip
-              label={isOwnProfile ? 'Moj profil' : roleLabel}
-              color="primary"
-              sx={{
-                mb: 1,
-                height: 28,
-                fontWeight: 900,
-                borderRadius: 999,
-                '& .MuiChip-label': {
-                  px: 1.1,
-                  fontSize: '0.7rem',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
-                },
-              }}
-            />
-            <Typography
-              variant="h3"
-              sx={{
-                fontWeight: 900,
-                color: 'secondary.main',
-                mb: 0.8,
-                letterSpacing: '-0.04em',
-                lineHeight: 1.04,
-                fontSize: { xs: '2rem', md: '2.45rem', lg: '2.75rem' },
-              }}
-            >
-              {profilePageTitle}
-            </Typography>
-            <Typography variant="body1" sx={{ color: 'text.secondary', fontWeight: 500, maxWidth: 760, lineHeight: 1.6 }}>
-              {profilePageSubtitle}
-            </Typography>
-          </Box>
-
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap alignItems="center">
-            {isContractor ? (
-              <Chip
-                icon={<StarRoundedIcon sx={{ fontSize: '0.95rem !important' }} />}
-                label={`${avgRating.toFixed(1)} ocjena`}
-                variant="outlined"
-                sx={{
-                  height: 32,
-                  borderRadius: 999,
-                  fontWeight: 800,
-                  bgcolor: alpha(theme.palette.background.paper, 0.8),
-                  borderColor: alpha(theme.palette.primary.main, 0.14),
-                }}
-              />
-            ) : !isOwnProfile ? (
-              <Chip
-                icon={<WorkOutlineRoundedIcon sx={{ fontSize: '0.95rem !important' }} />}
-                label={`${userJobs.length} oglasa`}
-                variant="outlined"
-                sx={{
-                  height: 32,
-                  borderRadius: 999,
-                  fontWeight: 800,
-                  bgcolor: alpha(theme.palette.background.paper, 0.8),
-                  borderColor: alpha(theme.palette.primary.main, 0.14),
-                }}
-              />
-            ) : null}
-
-          </Stack>
-        </Stack>
+        <ProfileHeader user={user} isOwnProfile={isOwnProfile} />
 
         <Grid container spacing={{ xs: 2.2, md: 3.2 }} justifyContent={showSecondaryColumn ? undefined : 'center'}>
           <Grid size={isOwnInvestorProfile ? { xs: 12, md: 9, lg: 8 } : { xs: 12, md: 4 }}>
             <Paper sx={{ ...cardStyle, position: showSecondaryColumn ? { md: 'sticky' } : undefined, top: showSecondaryColumn ? { md: 24 } : undefined }}>
               <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                <Avatar
-                  sx={{
-                    width: { xs: 98, md: 118 },
-                    height: { xs: 98, md: 118 },
-                    bgcolor: alpha(theme.palette.primary.main, 0.14),
-                    color: 'primary.light',
-                    fontSize: { xs: 34, md: 40 },
-                    fontWeight: 900,
-                    mb: 2.4,
-                    boxShadow: `inset 0 1px 0 ${alpha(theme.palette.common.white, 0.08)}`,
-                  }}
-                >
-                  {user.displayName.charAt(0)}
-                </Avatar>
-
-                <Typography variant="h5" sx={{ fontWeight: 900, mb: 0.8, color: 'secondary.main' }}>
-                  {user.displayName}
-                </Typography>
-
-                <Chip
-                  label={user.role === 'IZVODJAC' ? 'Izvodjac' : 'Investitor'}
-                  color={user.role === 'IZVODJAC' ? 'secondary' : 'primary'}
-                  sx={{ fontWeight: 900, borderRadius: 999, mb: 2.4 }}
-                />
-
-                {isOwnProfile && (
-                  <Chip
-                    label="Moj profil"
-                    variant="outlined"
-                    color="success"
-                    sx={{ fontWeight: 800, borderRadius: 999, mb: 2 }}
-                  />
-                )}
-
                 <Stack spacing={1.4} sx={{ width: '100%', mt: 0.5 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                     <LocationOnIcon sx={{ color: 'text.disabled', fontSize: 20 }} />
@@ -271,30 +139,6 @@ const ProfilePage: React.FC = observer(() => {
                 {user.bio}
               </Typography>
 
-              {user.serviceCategories && user.serviceCategories.length > 0 && (
-                <Box sx={{ mt: 3.2 }}>
-                  <Typography variant="overline" sx={{ color: 'primary.light', fontWeight: 900, letterSpacing: '0.08em' }}>
-                    Usluge i vjestine
-                  </Typography>
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-                    {user.serviceCategories.map((serviceCategory) => (
-                      <Chip
-                        key={serviceCategory}
-                        label={serviceCategory}
-                        size="small"
-                        sx={{
-                          fontWeight: 700,
-                          borderRadius: 999,
-                          bgcolor: alpha(theme.palette.background.paper, 0.84),
-                          border: '1px solid',
-                          borderColor: alpha(theme.palette.primary.main, 0.1),
-                        }}
-                      />
-                    ))}
-                  </Box>
-                </Box>
-              )}
-
               {isOwnProfile && user.phone && !user.isPhoneVisible && (
                 <Box
                   sx={{
@@ -315,34 +159,6 @@ const ProfilePage: React.FC = observer(() => {
                 </Box>
               )}
 
-              {isOwnProfile && (
-                <Box
-                  sx={{
-                    mt: 3.2,
-                    pt: 2.4,
-                    borderTop: '1px solid',
-                    borderColor: alpha(theme.palette.primary.main, 0.08),
-                  }}
-                >
-                  <Typography variant="overline" sx={{ color: 'primary.light', fontWeight: 900, letterSpacing: '0.08em' }}>
-                    Moj profil
-                  </Typography>
-                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.1} sx={{ mt: 1.15 }}>
-                    <BaseButton
-                      variant="contained"
-                      color="primary"
-                      onClick={() =>
-                        navigate('/profil/uredi', {
-                          state: { returnTo: `/profil/${user.id}`, returnLabel: 'Povratak na profil' },
-                        })
-                      }
-                      sx={{ flex: 1, borderRadius: 999, minHeight: 44, fontWeight: 800 }}
-                    >
-                      Uredi profil
-                    </BaseButton>
-                  </Stack>
-                </Box>
-              )}
             </Paper>
           </Grid>
 

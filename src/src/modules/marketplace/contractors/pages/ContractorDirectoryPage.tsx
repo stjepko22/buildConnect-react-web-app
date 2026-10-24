@@ -26,6 +26,7 @@ import BaseInput from '@/core/components/atoms/inputs/BaseInput';
 import { useRootStore } from '@/core/hooks/useRootStore';
 import { JOB_CATEGORIES, JobCategory } from '@/modules/marketplace/jobs/constants/jobCategories';
 import debounce from 'lodash/debounce';
+import ProfileAvatar from '@/modules/user/components/ProfileAvatar';
 
 const ContractorDirectoryPage: React.FC = observer(() => {
   const theme = useTheme();
@@ -351,10 +352,14 @@ const ContractorDirectoryPage: React.FC = observer(() => {
                       }}
                     >
                       <Stack spacing={2} sx={{ height: '100%' }}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="center">
-                          <Typography variant="h6" sx={{ fontWeight: 900 }}>
-                            {contractor.displayName}
-                          </Typography>
+                        <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
+                          <Stack direction="row" alignItems="center" spacing={1.25} sx={{ minWidth: 0 }}>
+                            <ProfileAvatar displayName={contractor.displayName} imageUrl={contractor.profileImageUrl}
+                              sx={{ width: 44, height: 44, bgcolor: 'primary.dark', color: 'primary.contrastText', fontWeight: 800 }} />
+                            <Typography variant="h6" sx={{ fontWeight: 900, overflowWrap: 'anywhere', minWidth: 0 }}>
+                              {contractor.displayName}
+                            </Typography>
+                          </Stack>
                           <Chip
                             icon={contractor.legalType === 'FIRMA' ? <BusinessIcon /> : <PersonIcon />}
                             label={contractor.legalType === 'FIRMA' ? 'Firma' : 'Fizička osoba'}

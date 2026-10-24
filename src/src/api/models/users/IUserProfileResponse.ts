@@ -9,6 +9,8 @@ export interface IUserProfileResponse {
   email: string;
   phone?: string;
   isPhoneVisible?: boolean;
+  profileImageUrl?: string | null;
+  coverImageUrl?: string | null;
   bio: string;
   location: string;
   joinedAt: string;

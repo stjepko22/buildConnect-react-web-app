@@ -16,6 +16,7 @@ import {
 import BaseButton from '@/core/components/atoms/buttons/BaseButton';
 import BaseInput from '@/core/components/atoms/inputs/BaseInput';
 import { useRootStore } from '@/core/hooks/useRootStore';
+import ProfileImagesEditor from '@/modules/user/components/ProfileImagesEditor';
 
 interface OwnProfileEditorProps {
   onCancel: () => void;
@@ -30,6 +31,7 @@ const OwnProfileEditor: React.FC<OwnProfileEditorProps> = observer(({ onCancel, 
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (userStore.savingProfileImageKind) return;
     const isSaved = await userStore.submitCurrentUserProfile();
     if (isSaved) {
       onSaved();
@@ -49,6 +51,7 @@ const OwnProfileEditor: React.FC<OwnProfileEditorProps> = observer(({ onCancel, 
         boxShadow: `0 16px 36px ${alpha(theme.palette.common.black, 0.035)}`,
       }}
       >
+        <ProfileImagesEditor />
         <form onSubmit={handleSubmit}>
         <Stack spacing={2.4}>
           <Box>
@@ -176,7 +179,7 @@ const OwnProfileEditor: React.FC<OwnProfileEditorProps> = observer(({ onCancel, 
               variant="contained"
               color="primary"
               loading={userStore.isSavingProfile}
-              disabled={!userStore.isProfileFormValid}
+              disabled={!userStore.isProfileFormValid || Boolean(userStore.savingProfileImageKind)}
               sx={{
                 minHeight: 42,
                 borderRadius: 999,
@@ -190,6 +193,7 @@ const OwnProfileEditor: React.FC<OwnProfileEditorProps> = observer(({ onCancel, 
               type="button"
               variant="outlined"
               color="secondary"
+              disabled={userStore.isSavingProfile || Boolean(userStore.savingProfileImageKind)}
               onClick={() => {
                 userStore.resetProfileForm();
                 onCancel();
