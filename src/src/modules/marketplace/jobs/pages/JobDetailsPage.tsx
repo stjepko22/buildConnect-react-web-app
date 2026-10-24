@@ -868,7 +868,7 @@ const JobDetailsPage: React.FC = observer(() => {
                         >
                           Pogledaj profil
                         </BaseButton>
-                        {isOwner && bid.status === 'PENDING' && !acceptedBid && (
+                        {isOwner && job.status === 'OPEN' && bid.status === 'PENDING' && !acceptedBid && (
                           <BaseButton
                             variant="contained"
                             color="success"
@@ -897,7 +897,13 @@ const JobDetailsPage: React.FC = observer(() => {
 
         <Grid size={{ xs: 12, md: 4 }}>
           <Box sx={{ position: { xs: 'static', md: 'sticky' }, top: { md: 24 } }}>
-            {isOwner && acceptedBid && !existingReview && (
+            {isOwner && acceptedBid && !existingReview && job.status === 'IN_PROGRESS' && (
+              <Alert severity="info" sx={{ mb: 3, borderRadius: 3 }}>
+                Recenziju možete ostaviti nakon što odabrani izvođač označi posao završenim.
+              </Alert>
+            )}
+
+            {isOwner && acceptedBid && !existingReview && job.status === 'COMPLETED' && (
               <Paper
                 sx={{
                   ...cardStyle,
@@ -908,7 +914,7 @@ const JobDetailsPage: React.FC = observer(() => {
                 }}
               >
                 <Chip
-                  label="Završni korak"
+                  label="Ocjena suradnje"
                   sx={{
                     mb: 1.25,
                     height: 28,
@@ -925,7 +931,7 @@ const JobDetailsPage: React.FC = observer(() => {
                   }}
                 />
                 <Typography variant="h5" sx={{ fontWeight: 900, mb: 1.5 }}>
-                  Završi projekt
+                  Ostavite recenziju
                 </Typography>
                 <Typography variant="body2" sx={{ mb: 4, opacity: 0.9 }}>
                   Ocijenite izvođača <strong>{acceptedBid.contractorName}</strong>.
